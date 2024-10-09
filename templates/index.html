@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Sentiment Analysis</h1>
+
+        <!-- Navigation Tabs -->
+        <ul class="tabs">
+            <li><a href="#search">Search Reviews</a></li>
+            <li><a href="#predict">Predict Sentiment</a></li>
+        </ul>
+
+        <!-- Tab 1: Search Reviews -->
+        <div id="search">
+            <h2>Search Product Reviews</h2>
+            <form method="POST" action="/">
+                <label for="keyword">Keyword:</label>
+                <input type="text" id="keyword" name="keyword" required>
+                
+                <label for="sentiment">Sentiment:</label>
+                <select id="sentiment" name="sentiment">
+                    <option value="">All</option>
+                    <option value="positive">Positive</option>
+                    <option value="negative">Negative</option>
+                    <option value="neutral">Neutral</option>
+                </select>
+                
+                <button type="submit">Search</button>
+            </form>
+
+            <h2>Results:</h2>
+            <div>
+                {% if tables %}
+                    {% for table in tables %}
+                        {{ table|safe }}
+                    {% endfor %}
+                {% else %}
+                    <p>No results found</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tab 2: Predict Sentiment -->
+        <div id="predict">
+            <h2>Predict Sentiment of Your Input</h2>
+            <form method="POST" action="/predict">
+                <label for="user_input">Enter Text:</label>
+                <textarea id="user_input" name="user_input" rows="4" cols="50" required></textarea>
+                <button type="submit">Predict</button>
+            </form>
+
+            {% if sentiment %}
+                <h3>Predicted Sentiment: {{ sentiment }}</h3>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Simple script to handle tab switching
+        document.addEventListener('DOMContentLoaded', function () {
+            var tabs = document.querySelectorAll('.tabs li a');
+            var contentDivs = document.querySelectorAll('div[id]');
+
+            tabs.forEach(function (tab) {
+                tab.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var target = this.getAttribute('href').substring(1);
+
+                    contentDivs.forEach(function (div) {
+                        div.style.display = (div.id === target) ? 'block' : 'none';
+                    });
+                });
+            });
+
+            // Show the first tab content by default
+            contentDivs.forEach(function (div, index) {
+                div.style.display = (index === 0) ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
